@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block content %}
+<!--{% for order in order.all %}-->
+
+
+
+<!--<p>{{ order.total_day }} {{ order.date }}</p>-->
+<!--{% endfor %}-->
+
+<!--<hr>-->
+<script src="https://cdn.anychart.com/releases/8.7.0/js/anychart-core.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.7.0/js/anychart-cartesian.min.js"></script>
+<script>
+    anychart.onDocumentReady(function () {
+
+    // create data
+    var data = [
+    {% for order in order.all %}
+      ["{{ order.date }}", {{ order.total_day  }}],
+      {% endfor %}
+    ];
+
+    // create a chart
+    var chart = anychart.line();
+
+    // create a line series and set the data
+    var series = chart.line(data);
+
+    // set the chart title
+    chart.title("График продаж");
+
+    // set the titles of the axes
+    var xAxis = chart.xAxis();
+    xAxis.title("День");
+    var yAxis = chart.yAxis();
+    yAxis.title("Продажи, грн");
+
+    // set the container id
+    chart.container("container");
+
+    // initiate drawing the chart
+    chart.draw();
+});
+</script>
+
+<div id="container" style="width: 100%; height: 300px"></div>
+<hr>
+<h4 class="text-center">Построение графиков по параметрам</h4><br>
+<div class="row">
+<div class="col-md-4">
+      <form action="{% url 'category_graf' %}" method="GET">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Введите название категории" name="c">
+        </div>
+        <button type="submit" class="btn btn-default col-md-12">Поиск</button>
+      </form>
+</div>
+    <div class="col-md-4">
+      <form action="{% url 'products_graf' %}" method="GET">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Введите номер продукта" name="n">
+        </div>
+        <button type="submit" class="btn btn-default col-md-12">Поиск</button>
+      </form>
+</div>
+    <div class="col-md-4">
+      <form action="{% url 'user_orders_graf' %}" method="GET">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Введите логин" name="q">
+        </div>
+        <button type="submit" class="btn btn-default col-md-12">Поиск</button>
+      </form>
+</div>
+</div>
+<hr>
+<h4 class="text-center">Построение графиков прогнозирования по параметрам</h4><br>
+<div class="row">
+<div class="col-md-4">
+      <form action="{% url 'category_sales_forecasting' %}" method="GET">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Введите название категории" name="fc">
+        </div>
+        <button type="submit" class="btn btn-default col-md-12">Прогноз</button>
+      </form>
+</div>
+    <div class="col-md-4">
+      <form action="{% url 'product_sales_forecasting' %}" method="GET">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Введите номер продукта" name="fn">
+        </div>
+        <button type="submit" class="btn btn-default col-md-12">Прогноз</button>
+      </form>
+</div>
+    <div class="col-md-4">
+      <form action="{% url 'user_sales_forecasting' %}" method="GET">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Введите логин" name="fq">
+        </div>
+        <button type="submit" class="btn btn-default col-md-12">Прогноз</button>
+      </form>
+</div>
+</div>
+<hr>
+<p>Номера категорий</p>
+{% for cat in category_description %}
+<p>{{ cat.id }}-{{ cat.name }}</p>
+{% endfor %}
+<hr>
+<h4 class="text-center">Номера продуктов</h4>
+<div class="row">
+<div class="col-md-8 col-md-offset-2">
+<table class="table">
+    <tr>
+        <td>№ продукта</td>
+        <td>Название продукта</td>
+    </tr>
+    {% for descr in product_description %}
+    <tr>
+        <td>{{ descr.id }}</td>
+        <td>{{ descr.title }}</td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+</div>
+{% endblock %}

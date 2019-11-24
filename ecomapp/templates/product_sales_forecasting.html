@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h3 class="text-center">График прогнозирования продаж по товару: {% for name in product_name %}"{{ name.title }}"{% endfor %}</h3>
+<div class="container">
+  <img src="{% static 'graph/product_sales_forecasting.png' %}" alt="" style="width: 100%; height: 100%">
+</div>
+{% endblock %}

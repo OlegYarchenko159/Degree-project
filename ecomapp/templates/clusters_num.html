@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h3 class="text-center">График метода "Локтя"</h3>
+<div class="container">
+  <p class="text-center"><img src="{% static 'graph/clusters_num.png' %}" alt="" style="width: 50%; height: 50%"></p>
+</div>
+<p class="text-center">Рекомендуемое количество кластеров: {{ k }}</p>
+ <div>
+ <form class="col-md-4 col-md-offset-4" action="{% url 'cluster_analysis' %}" method="GET">
+     <div class="form-group">
+          <input type="text" class="form-control" placeholder="Введите желаемое количество кластеров" name="ca">
+        </div>
+        <button type="submit" class="btn btn-default col-md-12">Далее</button>
+      </form>
+ </div>
+{% endblock %}

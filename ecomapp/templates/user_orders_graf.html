@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<p><a href="{% url 'orders_graf' %}">Вернуться на предыдущую страницу</a></p>
+<!--{% for user_order in founded_user %}-->
+<!--<p>{{ user_order.total }} {{ user_order.date }}</p>-->
+<!--{% endfor %}-->
+<!--{% for user_order in founded_user %}-->
+
+<!--<p>{{user_order.last_name}}</p>-->
+<!--{% endfor %}-->
+<!--<p>{{order.last_name}}</p>-->
+<hr>
+<script src="https://cdn.anychart.com/releases/8.7.0/js/anychart-core.min.js"></script>
+<script src="https://cdn.anychart.com/releases/8.7.0/js/anychart-cartesian.min.js"></script>
+<script>
+    anychart.onDocumentReady(function () {
+
+    // create data
+    var data = [
+    {% for user_order in founded_user %}
+      ["{{ user_order.date }}", {{ user_order.total  }}],
+      {% endfor %}
+    ];
+
+    // create a chart
+    var chart = anychart.line();
+
+    // create a line series and set the data
+    var series = chart.line(data);
+
+    // set the chart title
+    chart.title("График покупок определённого пользователя");
+
+    // set the titles of the axes
+    var xAxis = chart.xAxis();
+    xAxis.title("День");
+    var yAxis = chart.yAxis();
+    yAxis.title("Продажи, грн");
+
+    // set the container id
+    chart.container("container");
+
+    // initiate drawing the chart
+    chart.draw();
+});
+</script>
+<div id="container" style="width: 100%; height: 500px"></div>
+{% endblock %}

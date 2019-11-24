@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="top">
+        <h2 class="text-center">{{ product.title }}</h2>
+</div>
+<br>
+<div class="row">
+    <br>
+    <div class="col">
+    <img src="{{ product.image_url }}" width="80%" height="380px">
+    </div>
+        <div class="col">
+            <p>Тип продукта: <strong>{{ product.category }}</strong></p>
+    <p>Бренд: <strong>{{ product.brand }}</strong></p>
+    <p>Фасовка: <strong>{{ product.packing }}</strong></p>
+    <p>Упаковка: <strong>{{ product.boxing }}</strong></p>
+    <p>Срок хранения: <strong>{{ product.storage_life }}</strong></p>
+            <div class="row">
+                <p><strong>Описание: </strong>{{ product.description }}</p></div>
+    <hr>
+    </div>
+    <div class="col">
+        <p class="text-center"><strong>Цена: </strong>₴ {{ product.price }}</p>
+    {% if request.user.is_authenticated %}
+    <p class="text-center"><a href="#" class="add_to_cart" data-slug="{{ product.slug }}">
+        <button class="btn btn-primary">Добавить в корзину</button>
+    </a></p>
+    {% else %}<small class="text-center">Заказывать товар могут только авторизированые пользователи.
+    Пожалуйста, <a href="{% url 'login' %}">войдите</a> или <a href="{% url 'registration' %}">зарегистрируйтесь.</a></small>{% endif %}
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $('.add_to_cart').on('click', function(qwe){
+            qwe.preventDefault()
+            product_slug = $(this).attr('data-slug')
+            data = {
+                product_slug: product_slug
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "{% url 'add_to_cart' %}",
+                data: data,
+                success: function(data){
+                    $('#cart_count').html(data.cart_total)
+                }
+            })
+        })
+    })
+
+</script>
+{% endblock %}

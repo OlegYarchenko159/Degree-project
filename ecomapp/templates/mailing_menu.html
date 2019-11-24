@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<!--<a href="{% url 'message' %}"><button type="submit" class="btn btn-default">Рассылка всем</button></a>-->
+<a href="{% url 'coffee_zer_mail' %}"><button type="submit" class="btn btn-default">Расширение ассортимента кофе в зёрнах</button></a>
+<a href="{% url 'coffee_molot_mail' %}"><button type="submit" class="btn btn-default">Расширение ассортимента молотого кофе</button></a>
+<a href="{% url 'coffee_rastvor_mail' %}"><button type="submit" class="btn btn-default">Расширение ассортимента растворимого кофе</button></a>
+<a href="{% url 'tea_paket_mail' %}"><button type="submit" class="btn btn-default">Расширение ассортимента пакетированного чая</button></a>
+<a href="{% url 'tea_listov_mail' %}"><button type="submit" class="btn btn-default">Расширение ассортимента листового чая</button></a>
+<br><br>
+<a href="{% url 'message_for_new_year' %}"><button type="submit" class="btn btn-default">Новогодняя акция</button></a>
+
+    {% endblock %}

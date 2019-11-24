@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Месяц', 'Продажи'],
+          ['Январь',  25000],
+          ['Февраль',  24000],
+          ['Март',  20000],
+          ['Апрель',  19646],
+          ['Май',  21600],
+          ['Июнь',  18965],
+          ['Июль',  16465],
+          ['Август',  14859],
+          ['Сентябрь',  16758],
+          ['Октябрь',  18452],
+          ['Ноябрь',  26068],
+          ['Декабрь',  33.685],
+
+        ]);
+
+         var options = {
+          title: 'Продажи и расходы за 2017 год',
+          curveType: 'function',
+          legend: { position: 'bottom' }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, options);
+      }
+    </script>
+    <div id="curve_chart" style="width: 900px; height: 500px"></div>
+{% endblock %}
