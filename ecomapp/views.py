@@ -259,6 +259,7 @@ def account_view(request):
     return render(request, 'account.html', context)
 
 
+# регистрация
 def registration_view(request):
     form = RegistrationForm(request.POST or None)
     if form.is_valid():
@@ -284,6 +285,7 @@ def registration_view(request):
     return render(request, 'registration.html', context)
 
 
+# авторизация
 def login_view(request):
     form = LoginForm(request.POST or None)
     if form.is_valid():
@@ -301,7 +303,8 @@ def login_view(request):
 
 # график продаж
 def orders_graf(request):
-    order = Order.objects.values('date').annotate(total_day=Sum('total')) # получение данных из БД об общей сумме продаж за день
+    # получение данных из БД об общей сумме продаж за день
+    order = Order.objects.values('date').annotate(total_day=Sum('total'))
     category_description = Category.objects.all() # данные для отобрежения на странице
     product_description = Product.objects.all() # данные из БД для отобрадения таблици с перечнем товаров
     context = {
@@ -316,7 +319,8 @@ def orders_graf(request):
 def products_graf(request):
     number = request.GET.get('n') # получение номера товара из формы
     n = int(number)
-    newprod = CartItem.objects.filter(Q(product=n)).values('date').annotate(sum_total=Sum('item_total')) # получение из БД данних об определённом продукте с общей суммой продаж за день
+    # получение из БД данних об определённом продукте с общей суммой продаж за день
+    newprod = CartItem.objects.filter(Q(product=n)).values('date').annotate(sum_total=Sum('item_total')) 
     product_name = Product.objects.filter(id=n) # получение названия продукта для отображения на странице
     context = {
         'newprod': newprod,
@@ -329,7 +333,8 @@ def products_graf(request):
 def category_graf(request):
     cat = request.GET.get('c') # получение данных из формы с номером категории
     c = int(cat)
-    category = CartItem.objects.filter(Q(product__category_id=c)).values('date').annotate(sum_total=Sum('item_total')) # получение данных о продажах товаров определённой категории за день
+    # получение данных о продажах товаров определённой категории за день
+    category = CartItem.objects.filter(Q(product__category_id=c)).values('date').annotate(sum_total=Sum('item_total')) 
     category_name = Category.objects.filter(id=c) # получение названия выбраной категории
     context = {
         'category': category,
@@ -344,7 +349,8 @@ class UserOrdersGrafView(View):
 
     def get(self, request, *args, **kwargs):
         query = self.request.GET.get('q') # из формы получение логина пользователя
-        founded_user = Order.objects.filter(Q(user_id__username__contains=query)) # поиск в БД имени коиента в таблице с заказами
+        # поиск в БД имени коиента в таблице с заказами
+        founded_user = Order.objects.filter(Q(user_id__username__contains=query)) 
         context = {
             'founded_user': founded_user,
         }
@@ -353,7 +359,8 @@ class UserOrdersGrafView(View):
 
 # прогнозирование продаж
 def sales_forecasting(request):
-    sales = Order.objects.values('date').annotate(total_day=Sum('total')) # получение данных из БД об общей сумме продаж за день
+    # получение данных из БД об общей сумме продаж за день
+    sales = Order.objects.values('date').annotate(total_day=Sum('total')) 
     data = pd.DataFrame(sales) # формирование pandas data frame
 
     # divide into train and validation set
@@ -371,14 +378,16 @@ def sales_forecasting(request):
     plt.plot(train, label='Train')
     plt.plot(valid, label='Valid')
     plt.plot(forecast, label='Prediction')
-    plt.savefig('/home/olegsamsnote/PycharmProjects/CTshop/shop/ecomapp/static/graph/sales_forecasting.png') # сохранение результатов прогнозирования
+    # сохранение результатов прогнозирования
+    plt.savefig('/home/olegsamsnote/PycharmProjects/CTshop/shop/ecomapp/static/graph/sales_forecasting.png') 
     dataF = data # получение данных до анализа
     dataF['forecast'] = forecast # добавление к исходным данным столбец с пронозом
     # сохранение результатов прогноза в документ
     writer = pd.ExcelWriter('forecast.xls')
     dataF.to_excel(writer, 'forecast')
     writer.save()
-    rb = xlrd.open_workbook('/home/olegsamsnote/PycharmProjects/CTshop/shop/forecast.xls', formatting_info=True) # отерытие созданного документа
+    # открытие созданного документа
+    rb = xlrd.open_workbook('/home/olegsamsnote/PycharmProjects/CTshop/shop/forecast.xls', formatting_info=True) 
     sheet = rb.sheet_by_index(0)
     Y = 0
     koef = []
@@ -506,7 +515,8 @@ def user_sales_forecasting(request):
 
 # показывает рекомендуемое количество кластеров
 def clusters_num(request):
-    data_num = CartItem.objects.values('user_num', 'product_id', 'qty', 'item_total') # из БД получение данных определённых столбцов
+    # из БД получение данных определённых столбцов - номер клиента, номер продукта, количество товара, общая стоимость товара
+    data_num = CartItem.objects.values('user_num', 'product_id', 'qty', 'item_total') 
     data_cn = pd.DataFrame(data_num) # формирование pandas data frame
     dataNorm = preprocessing.scale(data_cn) # нормализация данних
 
@@ -521,7 +531,8 @@ def clusters_num(request):
     acceleration = np.diff(last, 2)
     acceleration_rev = acceleration[::-1]
     plt.plot(idxs[:-2] + 1, acceleration_rev)
-    plt.savefig('/home/olegsamsnote/PycharmProjects/CTshop/shop/ecomapp/static/graph/clusters_num.png') # сохранения графика
+    # сохранения графика
+    plt.savefig('/home/olegsamsnote/PycharmProjects/CTshop/shop/ecomapp/static/graph/clusters_num.png') 
     k = acceleration_rev.argmax() + 2
     context = {
         'k': k
@@ -531,7 +542,8 @@ def clusters_num(request):
 
 # проведение кластерного анализа
 def cluster_analysis(request):
-    data_num = CartItem.objects.values('user_num', 'product_id', 'qty', 'item_total') # из БД получение данных определённых столбцов
+    # из БД получение данных определённых столбцов
+    data_num = CartItem.objects.values('user_num', 'product_id', 'qty', 'item_total') 
     datac = pd.DataFrame(data_num) # формирование pandas data frame
     data_for_clust = datac.drop(datac.columns[0], axis=1).values # удаление первого столбца
     dataNorm = preprocessing.scale(datac) #  нормальзация данных
@@ -558,7 +570,8 @@ def cluster_analysis(request):
 
 # электронная рассылка всем клиентам, которые купили зерновой кофе
 def coffee_zer_mail(request):
-    email_data = Order.objects.values_list('user_id__id', 'user_id__email') # получение из таблицы оформленых заказов информацию о клиентах, которые уже совершили покупку
+    # получение из таблицы оформленых заказов информацию о клиентах
+    email_data = Order.objects.values_list('user_id__id', 'user_id__email') 
     clients_emails = pd.DataFrame(email_data)
     writer = pd.ExcelWriter('clients_emails.xls')
     clients_emails.to_excel(writer, 'emails')
@@ -570,17 +583,19 @@ def coffee_zer_mail(request):
     # поиск клиентов, которые купили зерновой кофе
     for i in range(1, 865):
         valF = sheet.cell_value(i, 2) # столбец с номером продукта
-        if valF in category_list: # если номер товара соответствует категории, то клиент добавляется в список клиентов для рассылки
+        # если номер товара соответствует категории, то клиент добавляется в список клиентов для рассылки
+        if valF in category_list: 
             valB = sheet.cell_value(i, 1) # столбец с номером клиента
             if valB not in user_list:
                 valU = int(valB)
                 user_list.append(valU)
     user_email = []
-    rb2 = xlrd.open_workbook('/home/olegsamsnote/PycharmProjects/CTshop/shop/clients_emails.xls', formatting_info=True) # открытие таблици с клиентами и их электронными адресами
+    # открытие таблици с клиентами и их электронными адресами
+    rb2 = xlrd.open_workbook('/home/olegsamsnote/PycharmProjects/CTshop/shop/clients_emails.xls', formatting_info=True) 
     sheet2 = rb2.sheet_by_index(0)
     for j in range(1, 392):
         valC = sheet2.cell_value(j, 1) # столбец с номером клиента
-        if valC in user_list: # если клинт есть с списке для рассылки, то его почта добавляется в список адресов
+        if valC in user_list: # если клиент есть с списке для рассылки, то его почта добавляется в список адресов
             valE = sheet2.cell_value(j, 2) # столбец с электронной почтой
             if valE not in user_email: # проверка наличия адреса в списке, если нет, то добавить
                 user_email.append(valE)
