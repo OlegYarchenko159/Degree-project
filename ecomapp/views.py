@@ -531,7 +531,7 @@ def clusters_num(request):
     acceleration = np.diff(last, 2)
     acceleration_rev = acceleration[::-1]
     plt.plot(idxs[:-2] + 1, acceleration_rev)
-    # сохранения графика
+    # сохранение графика
     plt.savefig('/home/olegsamsnote/PycharmProjects/CTshop/shop/ecomapp/static/graph/clusters_num.png') 
     k = acceleration_rev.argmax() + 2
     context = {
@@ -540,7 +540,7 @@ def clusters_num(request):
     return render(request, 'clusters_num.html', context)
 
 
-# проведение кластерного анализа
+# кластерный анализ
 def cluster_analysis(request):
     # из БД получение данных определённых столбцов
     data_num = CartItem.objects.values('user_num', 'product_id', 'qty', 'item_total') 
@@ -582,10 +582,10 @@ def coffee_zer_mail(request):
     sheet = rb.sheet_by_index(0)
     # поиск клиентов, которые купили зерновой кофе
     for i in range(1, 865):
-        valF = sheet.cell_value(i, 2) # столбец с номером продукта
+        valF = sheet.cell_value(i, 2) # ячейка столбца с номером продукта
         # если номер товара соответствует категории, то клиент добавляется в список клиентов для рассылки
         if valF in category_list: 
-            valB = sheet.cell_value(i, 1) # столбец с номером клиента
+            valB = sheet.cell_value(i, 1) # ячейка столбца с номером клиента
             if valB not in user_list:
                 valU = int(valB)
                 user_list.append(valU)
@@ -594,9 +594,9 @@ def coffee_zer_mail(request):
     rb2 = xlrd.open_workbook('/home/olegsamsnote/PycharmProjects/CTshop/shop/clients_emails.xls', formatting_info=True) 
     sheet2 = rb2.sheet_by_index(0)
     for j in range(1, 392):
-        valC = sheet2.cell_value(j, 1) # столбец с номером клиента
+        valC = sheet2.cell_value(j, 1) # ячейка столбца с номером клиента
         if valC in user_list: # если клиент есть с списке для рассылки, то его почта добавляется в список адресов
-            valE = sheet2.cell_value(j, 2) # столбец с электронной почтой
+            valE = sheet2.cell_value(j, 2) # ячейка столбца с электронной почтой
             if valE not in user_email: # проверка наличия адреса в списке, если нет, то добавить
                 user_email.append(valE)
     msg_html = render_to_string('send_content/assort_zer_coffee.html') # путь к html сообщению
